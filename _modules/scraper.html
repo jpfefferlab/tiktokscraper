@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scraper &mdash; tiktokscraper 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tiktokscraper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../01_about.html">TiktokScraper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_source.html">Source Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tiktokscraper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scraper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scraper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.chrome.options</span> <span class="kn">import</span> <span class="n">Options</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="kn">import</span> <span class="nn">chromedriver_autoinstaller</span>
+<span class="n">chromedriver_autoinstaller</span><span class="o">.</span><span class="n">install</span><span class="p">()</span> 
+
+<div class="viewcode-block" id="get_video_details">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_video_details">[docs]</a>
+<span class="k">def</span> <span class="nf">get_video_details</span><span class="p">(</span><span class="n">video_ids</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Get the metadata of one or more videos. This metadata includes for example the video title and description. </span>
+<span class="sd">        More information on how a video metadata object looks like can be found in the chapter source.</span>
+
+<span class="sd">        :param List[str] videos: Provide video id(s) in a list of strings, eg. [&quot;7417415534339280160&quot;,&quot;7423680782276758817&quot;]. The id of a video can be found in the link to this video. </span>
+<span class="sd">        :returns: A list of video metadata objects (see source)</span>
+<span class="sd">        :rtype: list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">video_details</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">video_ids</span><span class="p">:</span>
+        <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://m.tiktok.com/v/</span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">.html&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="c1"># Check if the target marker is in the HTML</span>
+            <span class="k">if</span> <span class="s1">&#39;__UNIVERSAL_DATA_FOR_REHYDRATION__&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="c1"># Define the regex pattern to extract the data</span>
+                <span class="n">item_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;webapp\.video-detail&quot;:{&quot;itemInfo&quot;:(.*?),&quot;shareMeta&quot;&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Search for matches in the HTML response</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">item_info</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+                <span class="c1"># Print or process the result</span>
+                <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">video_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No data found for </span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No data found for </span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to retrieve data for </span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">. Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+    <span class="k">return</span><span class="p">(</span><span class="n">video_details</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_profile_details">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_profile_details">[docs]</a>
+<span class="k">def</span> <span class="nf">get_profile_details</span><span class="p">(</span><span class="n">profile_names</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Return profile metadata for a given user. This metadata includes for example the users statistics and privacy settings. </span>
+<span class="sd">        More information on how a profile metadata object looks like can be found in the chapter source.</span>
+
+<span class="sd">        :param List[str] profilenames: Provide usernames in a list of strings, eg. [&quot;selenagomez&quot;, &quot;zachking&quot;]. The name of a user can be found in the link to the users profile, (e.g. https://www.tiktok.com/@selenagomez). </span>
+<span class="sd">        :returns: A list of profile metadata objects (see source)</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">profile_details</span> <span class="o">=</span><span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">profile_name</span> <span class="ow">in</span> <span class="n">profile_names</span><span class="p">:</span>
+        <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/@</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;__UNIVERSAL_DATA_FOR_REHYDRATION__&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+            <span class="c1"># Define the regex pattern to extract the data</span>
+            <span class="n">item_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;webapp\.user-detail&quot;:{&quot;userInfo&quot;:(.*?),&quot;shareMeta&quot;&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Search for matches in the HTML response</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">item_info</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="c1"># Print or process the result</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">profile_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No data found for </span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No data found for </span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+    <span class="k">return</span><span class="p">(</span><span class="n">profile_details</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_comments_from_video">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_comments_from_video">[docs]</a>
+<span class="k">def</span> <span class="nf">get_comments_from_video</span><span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="n">calls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the comments metadata for a given video. This metadata includes for example the comments text and language. </span>
+<span class="sd">        More information on how a comment metadata object looks like can be found in the chapter source.</span>
+<span class="sd">        Caution: The comment count of a user includes the number of original comments as well as the number of comment replies (comments to comments).</span>
+<span class="sd">        With this function, you can only collect original comments, thus the number of collected comments will be less than the comment count.</span>
+
+<span class="sd">        :param str video_id: Provide a video id as strings, eg. &quot;7417415534339280160&quot;. The id of a video can be found in the link to this video. </span>
+<span class="sd">        :param int calls: The number of calls for the function. Each call will return approximately 50 comments (as long as there are still comments to collect).        </span>
+<span class="sd">        :returns: A list of comment metadata objects (see source)</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">calls</span> <span class="o">=</span> <span class="n">calls</span><span class="o">*</span><span class="mi">50</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">while</span> <span class="n">cursor</span><span class="o">&lt;</span><span class="n">calls</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/api/comment/list/?aid=1988&amp;aweme_id=</span><span class="si">{</span><span class="n">video_id</span><span class="si">}</span><span class="s2">&amp;count=9999999&amp;cursor=</span><span class="si">{</span><span class="n">cursor</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;comments&quot;</span><span class="p">]</span><span class="o">!=</span><span class="p">[]:</span>
+            <span class="n">comments</span> <span class="o">+=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;comments&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#no more comments</span>
+            <span class="k">break</span>
+        <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">50</span>
+    <span class="k">return</span> <span class="n">comments</span></div>
+
+
+
+
+<div class="viewcode-block" id="start_selenium">
+<a class="viewcode-back" href="../02_functions.html#scraper.start_selenium">[docs]</a>
+<span class="k">def</span> <span class="nf">start_selenium</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This function will start an automated browser and first open wikipedia, then TikTok. </span>
+<span class="sd">        Wait until the TikTok page is fully loaded. Then, you can manually login to TikTok,</span>
+<span class="sd">        and answer the questions you are asked by TikTok (e.g. solve a captcha or disable cookies</span>
+<span class="sd">        when asked). Once you are finished and the Tiktok Newsfeed is fully visible, you can</span>
+<span class="sd">        execute the next function, using this driver object.</span>
+<span class="sd">        </span>
+<span class="sd">        Alternatively, if you want to use another browser, you can use your own function to create a driver object.</span>
+<span class="sd">        </span>
+<span class="sd">        Caution: With this function, we try to simulate a normal Chrome browser, not a test browser (as TikTok</span>
+<span class="sd">        sometimes prevents the login from test browsers). To make this work, the Chrome browser needs to be installed</span>
+<span class="sd">        on your system. If this functions starts a browser in a test environment, check whether you have chrome installed.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: A driver object. This can be inserted in each function requiring the driver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">Options</span><span class="p">()</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;start-maximized&quot;</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s2">&quot;excludeSwitches&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;enable-automation&quot;</span><span class="p">])</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s1">&#39;useAutomationExtension&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--disable-blink-features=AutomationControlled&#39;</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--profile-directory=Default&quot;</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s2">&quot;prefs&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;intl.accept_languages&quot;</span><span class="p">:</span> <span class="s2">&quot;en,en_US&quot;</span><span class="p">})</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    
+    <span class="c1">#Open Wikipedia, so that we have another start adress</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://en.wikipedia.org&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    
+    <span class="c1">#Open Tiktok</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://www.tiktok.com&quot;</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_videos_by_keyword">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_videos_by_keyword">[docs]</a>
+<span class="k">def</span> <span class="nf">get_videos_by_keyword</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a keyword-search and collect the ids of the videos of the search results. </span>
+<span class="sd">        </span>
+<span class="sd">        Caution: The TikTok keyword search will show anything related to a keyword. If you search for the </span>
+<span class="sd">        word &quot;dog&quot;, it will give you videos with dog in the title, the music title, the username and more.</span>
+<span class="sd">        </span>
+<span class="sd">        Requires the execution of start_selenium and login to TikTok first.</span>
+
+<span class="sd">        :param str keyword: You can either use a keyword (e.g. &quot;dog&quot; or &quot;funny dog&quot;) or a hashtag (e.g. &quot;#dog&quot;) </span>
+<span class="sd">        :param selenium.WebDriver driver: The driver you have created with start_selenium() (or your own driver) </span>
+<span class="sd">        :param int limit: Limit the number of results. If the number of search results exceeds this value, the function will return the ids of the top l videos (or a little bit more).</span>
+<span class="sd">        :returns: List of video links, e.g. [&quot;https://www.tiktok.com/@alvathehotdog/ video/7389719882289483041&quot;, &quot;https://www.tiktok.com/@unilad/ video/7010775526902107398&quot;]</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="c1"># Navigate to TikTok search page</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/search?q=</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>  <span class="c1"># Wait for the page to load</span>
+
+    <span class="n">video_links</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
+    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_links</span><span class="p">)</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">:</span>  
+        <span class="c1"># Scroll down to load more videos</span>
+        <span class="n">scroll_duration</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">scroll_duration</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">end_time</span><span class="p">:</span>
+            <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s2">&quot;xpath&quot;</span><span class="p">,</span> <span class="s2">&quot;//body&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">ARROW_DOWN</span><span class="p">)</span>
+        
+        <span class="c1">#Extract videos</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">elements</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;a[href*=&#39;/video/&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">video_links</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">video_links</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">video_links</span><span class="p">))</span>  <span class="c1"># Remove duplicates</span>
+        
+        <span class="c1">#Check, whether end of page reached</span>
+        <span class="n">current_scroll_position</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return window.scrollY&quot;</span><span class="p">)</span>
+        <span class="n">total_page_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return document.body.scrollHeight&quot;</span><span class="p">)</span>
+        <span class="n">visible_window_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return window.innerHeight&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">current_scroll_position</span> <span class="o">+</span> <span class="n">visible_window_height</span> <span class="o">&gt;=</span> <span class="n">total_page_height</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">video_links</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_videos_by_user">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_videos_by_user">[docs]</a>
+<span class="k">def</span> <span class="nf">get_videos_by_user</span><span class="p">(</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collect the ids of the videos for a given profile. </span>
+<span class="sd">        Requires the execution of start_selenium and login to TikTok first.</span>
+
+<span class="sd">        :param str profile_name: Provide one username, eg. &quot;selenagomez&quot;. The name of a user can be found in the link to the users profile, (e.g. https://www.tiktok.com/@selenagomez). </span>
+<span class="sd">        :param selenium.WebDriver driver: The driver you have created with start_selenium() (or your own driver) </span>
+<span class="sd">        :param int limit: Limit the number of results. If the number of user videos exceeds this value, the function will return the ids of the top l videos (or a little bit more).</span>
+<span class="sd">        :returns: List of video links, e.g. [&quot;https://www.tiktok.com/@alvathehotdog/ video/7389719882289483041&quot;, &quot;https://www.tiktok.com/@unilad/ video/7010775526902107398&quot;]</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Open profile</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/@</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>  <span class="c1"># Wait for the page to load</span>
+
+    <span class="n">video_links</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
+    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_links</span><span class="p">)</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">:</span>  
+        <span class="c1"># Scroll down to load more videos</span>
+        <span class="n">scroll_duration</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">scroll_duration</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">end_time</span><span class="p">:</span>
+            <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s2">&quot;xpath&quot;</span><span class="p">,</span> <span class="s2">&quot;//body&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">ARROW_DOWN</span><span class="p">)</span>
+            
+        <span class="c1">#Extract videos</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">elements</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;a[href*=&#39;/video/&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">video_links</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+        
+        <span class="c1">#Check, whether end of page reached</span>
+        <span class="n">current_scroll_position</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return window.scrollY&quot;</span><span class="p">)</span>
+        <span class="n">total_page_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return document.body.scrollHeight&quot;</span><span class="p">)</span>
+        <span class="n">visible_window_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;return window.innerHeight&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">current_scroll_position</span> <span class="o">+</span> <span class="n">visible_window_height</span> <span class="o">&gt;=</span> <span class="n">total_page_height</span><span class="p">:</span>
+            <span class="k">break</span>
+            
+        <span class="c1">#Pause a little</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">video_links</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_followers_of_user">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_followers_of_user">[docs]</a>
+<span class="k">def</span> <span class="nf">get_followers_of_user</span><span class="p">(</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the followers for a given user. </span>
+<span class="sd">        Requires the execution of start_selenium and login to TikTok first.</span>
+<span class="sd">        Caution: Sometimes, the follower count displayed on TikTok is higher than the actual number of followers shown on TikTok.</span>
+
+<span class="sd">        :param str profile_name: Provide one username, eg. &quot;selenagomez&quot;. The name of a user can be found in the link to the users profile, (e.g. https://www.tiktok.com/@selenagomez). </span>
+<span class="sd">        :param selenium.WebDriver driver: The driver you have created with start_selenium() (or your own driver) </span>
+<span class="sd">        :param int limit: Limit the number of results. If the number of followers exceeds this value, the function will return the names of the top l followers (or a little bit more).</span>
+<span class="sd">        :returns: A list of follower links, eg. [&quot;https://www.tiktok.com/@imranadil915&quot;, &quot;https://www.tiktok.com/@user161624720276&quot;].</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Open profile page</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/@</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>  
+
+    <span class="c1">#Click on follower tab</span>
+    <span class="n">followers_button</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;span[data-e2e=&#39;followers&#39;]&quot;</span><span class="p">)</span>
+    <span class="n">followers_button</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">followers_container</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;div.css-wq5jjc-DivUserListContainer.eorzdsw0&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>  
+    
+    <span class="n">followers</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">followers</span><span class="p">)</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">:</span>  
+        <span class="c1">#Extract followers</span>
+        <span class="n">link_elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;a.es616eb3.css-5c23qb-StyledLink-StyledUserInfoLink.er1vbsz0&quot;</span><span class="p">)</span>
+        <span class="n">current_followers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">link</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">link_elements</span><span class="p">])</span>
+        <span class="n">new_followers</span> <span class="o">=</span> <span class="n">current_followers</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">followers</span><span class="p">)</span>
+        
+        <span class="c1">#Check, whether end of page reached</span>
+        <span class="k">if</span> <span class="n">new_followers</span><span class="o">==</span><span class="nb">set</span><span class="p">():</span>
+            <span class="k">break</span>
+        
+        <span class="c1">#Add new followers</span>
+        <span class="n">followers</span> <span class="o">=</span> <span class="n">followers</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new_followers</span><span class="p">)</span>
+        
+        <span class="c1"># Scroll down to load more followers</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;arguments[0].scrollTop = arguments[0].scrollHeight;&quot;</span><span class="p">,</span> <span class="n">followers_container</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span> 
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">followers</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_followings_of_user">
+<a class="viewcode-back" href="../02_functions.html#scraper.get_followings_of_user">[docs]</a>
+<span class="k">def</span> <span class="nf">get_followings_of_user</span><span class="p">(</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the links to users following a given profile. </span>
+<span class="sd">        Requires the execution of start_selenium and login to TikTok first.</span>
+<span class="sd">        Caution: Sometimes, the following count displayed on TikTok is higher than the actual number of followers shown on TikTok.</span>
+<span class="sd">        Caution: The list of followings is private for many users, thus collecting the followings might not reveal any results.</span>
+<span class="sd">        </span>
+<span class="sd">        :param str profile_name: Provide one username, eg. &quot;selenagomez&quot;. The name of a user can be found in the link to the users profile, (e.g. https://www.tiktok.com/@selenagomez). </span>
+<span class="sd">        :param selenium.WebDriver driver: The driver you have created with start_selenium() (or your own driver) </span>
+<span class="sd">        :param int limit: Limit the number of results. If the number of followings exceeds this value, the function will return the names of the top l followings (or a little bit more).</span>
+<span class="sd">        :returns: A list of following links, eg. [&quot;https://www.tiktok.com/@imranadil915&quot;, &quot;https://www.tiktok.com/@user161624720276&quot;].</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#go_to_profile_page</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.tiktok.com/@</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>  <span class="c1"># Wait for the page to load</span>
+
+    <span class="c1">#Click on following tab</span>
+    <span class="n">following_button</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;span[data-e2e=&#39;following&#39;]&quot;</span><span class="p">)</span>
+    <span class="n">following_button</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">followings_container</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;div.css-wq5jjc-DivUserListContainer.eorzdsw0&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>    
+    
+    <span class="n">followings</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">followings</span><span class="p">)</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">:</span> 
+        <span class="c1">#Extract followings</span>
+        <span class="n">link_elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="s2">&quot;a.es616eb3.css-5c23qb-StyledLink-StyledUserInfoLink.er1vbsz0&quot;</span><span class="p">)</span>
+        <span class="n">current_followings</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">link</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">link_elements</span><span class="p">])</span>
+        <span class="n">new_followings</span> <span class="o">=</span> <span class="n">current_followings</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">followings</span><span class="p">)</span>
+        
+        <span class="c1">#Check, whether end of page reached</span>
+        <span class="k">if</span> <span class="n">new_followings</span><span class="o">==</span><span class="nb">set</span><span class="p">():</span>
+            <span class="k">break</span>
+        
+        <span class="c1">#Add new followings</span>
+        <span class="n">followings</span> <span class="o">=</span> <span class="n">followings</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new_followings</span><span class="p">)</span>
+        
+        <span class="c1"># Scroll down to load more followers</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;arguments[0].scrollTop = arguments[0].scrollHeight;&quot;</span><span class="p">,</span> <span class="n">followings_container</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span> 
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">followings</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Angelina Voggenreiter.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
