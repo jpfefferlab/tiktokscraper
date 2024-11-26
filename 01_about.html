@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TiktokScraper &#8212; tiktokscraper 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions" href="02_functions.html" />
+    <link rel="prev" title="Welcome to the documentation of TiktokScraper!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tiktokscraper">
+<h1>TiktokScraper<a class="headerlink" href="#tiktokscraper" title="Link to this heading">¶</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>With this package you can collect TikTok videos, comments and user information, perform keyword search and collect the followers, followings and videos of a user.</p>
+<p>Half of the packages (collect video metadata, collect comments, collect user information) works with simple requests. You do not need a TikTok profile for this.</p>
+<p>The other half of the package (perform keyword search and collect the followers, followings and videos of a user) works with Selenium. For this, you need to have a Chrome browser installed and you need a TikTok profile, so you can login to the platform. This part will work a bit slower to prevent getting blocked.</p>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h2>
+<p>To install the package, execute the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install git+https://github.com/jpfefferlab/tiktokscraper.git
+</pre></div>
+</div>
+<p>If you want to execute the selenium functions, we recommend you to install any chrome browser on your system first. By this, the start_selenium-function will not use a test browser, but a normal chrome browser, which prevents many troubles when collecting data on TikTok.</p>
+<p>To use the TiktokScraper in a project, put the following command in your python script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tiktokscraper</span>
+</pre></div>
+</div>
+<p>To see how to use the package, you can run the <cite>example.py</cite> script located in the root directory.</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>This project is licensed under the MIT License - see the LICENSE file for details.</p>
+</section>
+<section id="contributions">
+<h2>Contributions<a class="headerlink" href="#contributions" title="Link to this heading">¶</a></h2>
+<p>This package was developed by Angelina Voggenreiter (<a class="reference external" href="mailto:angelina&#46;voggenreiter&#37;&#52;&#48;tum&#46;de">angelina<span>&#46;</span>voggenreiter<span>&#64;</span>tum<span>&#46;</span>de</a>) as part of the research project ‘Understanding, Detecting, and Mitigating Online Misogyny Against Politically Active Women’ at the Technical University of Munich. This research project is funded by the Bavarian Research Institute for Digital Transformation (bidt), an institute of the Bavarian Academy of Sciences and Humanities. A special thanks goes to our collaborator Rafael Giebisch, whose contributions have helped advance our understanding of TikTok’s structure.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">tiktokscraper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TiktokScraper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_source.html">Source Data</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to the documentation of TiktokScraper!</a></li>
+      <li>Next: <a href="02_functions.html" title="next chapter">Functions</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Angelina Voggenreiter.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/01_about.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

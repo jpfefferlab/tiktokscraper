@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Functions &#8212; tiktokscraper 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="03_examples.html" />
+    <link rel="prev" title="TiktokScraper" href="01_about.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="functions">
+<h1>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_comments_from_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_comments_from_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the comments metadata for a given video. This metadata includes for example the comments text and language. 
+More information on how a comment metadata object looks like can be found in the chapter source.
+Caution: The comment count of a user includes the number of original comments as well as the number of comment replies (comments to comments).
+With this function, you can only collect original comments, thus the number of collected comments will be less than the comment count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_id</strong> (<em>str</em>) – Provide a video id as strings, eg. “7417415534339280160”. The id of a video can be found in the link to this video.</p></li>
+<li><p><strong>calls</strong> (<em>int</em>) – The number of calls for the function. Each call will return approximately 50 comments (as long as there are still comments to collect).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of comment metadata objects (see source)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_followers_of_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_followers_of_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the followers for a given user. 
+Requires the execution of start_selenium and login to TikTok first.
+Caution: Sometimes, the follower count displayed on TikTok is higher than the actual number of followers shown on TikTok.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile_name</strong> (<em>str</em>) – Provide one username, eg. “selenagomez”. The name of a user can be found in the link to the users profile, (e.g. <a class="reference external" href="https://www.tiktok.com/&#64;selenagomez">https://www.tiktok.com/&#64;selenagomez</a>).</p></li>
+<li><p><strong>driver</strong> (<em>selenium.WebDriver</em>) – The driver you have created with start_selenium() (or your own driver)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Limit the number of results. If the number of followers exceeds this value, the function will return the names of the top l followers (or a little bit more).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of follower links, eg. [”<a class="reference external" href="https://www.tiktok.com/&#64;imranadil915">https://www.tiktok.com/&#64;imranadil915</a>”, “<a class="reference external" href="https://www.tiktok.com/&#64;user161624720276">https://www.tiktok.com/&#64;user161624720276</a>”].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_followings_of_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_followings_of_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the links to users following a given profile. 
+Requires the execution of start_selenium and login to TikTok first.
+Caution: Sometimes, the following count displayed on TikTok is higher than the actual number of followers shown on TikTok.
+Caution: The list of followings is private for many users, thus collecting the followings might not reveal any results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile_name</strong> (<em>str</em>) – Provide one username, eg. “selenagomez”. The name of a user can be found in the link to the users profile, (e.g. <a class="reference external" href="https://www.tiktok.com/&#64;selenagomez">https://www.tiktok.com/&#64;selenagomez</a>).</p></li>
+<li><p><strong>driver</strong> (<em>selenium.WebDriver</em>) – The driver you have created with start_selenium() (or your own driver)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Limit the number of results. If the number of followings exceeds this value, the function will return the names of the top l followings (or a little bit more).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of following links, eg. [”<a class="reference external" href="https://www.tiktok.com/&#64;imranadil915">https://www.tiktok.com/&#64;imranadil915</a>”, “<a class="reference external" href="https://www.tiktok.com/&#64;user161624720276">https://www.tiktok.com/&#64;user161624720276</a>”].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_profile_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_profile_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return profile metadata for a given user. This metadata includes for example the users statistics and privacy settings. 
+More information on how a profile metadata object looks like can be found in the chapter source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>profilenames</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Provide usernames in a list of strings, eg. [“selenagomez”, “zachking”]. The name of a user can be found in the link to the users profile, (e.g. <a class="reference external" href="https://www.tiktok.com/&#64;selenagomez">https://www.tiktok.com/&#64;selenagomez</a>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of profile metadata objects (see source)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_video_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_video_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Get the metadata of one or more videos. This metadata includes for example the video title and description. 
+More information on how a video metadata object looks like can be found in the chapter source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>videos</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Provide video id(s) in a list of strings, eg. [“7417415534339280160”,”7423680782276758817”]. The id of a video can be found in the link to this video.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of video metadata objects (see source)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_videos_by_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_videos_by_keyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Perform a keyword-search and collect the ids of the videos of the search results.</p>
+<p>Caution: The TikTok keyword search will show anything related to a keyword. If you search for the 
+word “dog”, it will give you videos with dog in the title, the music title, the username and more.</p>
+<p>Requires the execution of start_selenium and login to TikTok first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keyword</strong> (<em>str</em>) – You can either use a keyword (e.g. “dog” or “funny dog”) or a hashtag (e.g. “#dog”)</p></li>
+<li><p><strong>driver</strong> (<em>selenium.WebDriver</em>) – The driver you have created with start_selenium() (or your own driver)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Limit the number of results. If the number of search results exceeds this value, the function will return the ids of the top l videos (or a little bit more).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of video links, e.g. [”<a class="reference external" href="https://www.tiktok.com/&#64;alvathehotdog/">https://www.tiktok.com/&#64;alvathehotdog/</a> video/7389719882289483041”, “<a class="reference external" href="https://www.tiktok.com/&#64;unilad/">https://www.tiktok.com/&#64;unilad/</a> video/7010775526902107398”]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">get_videos_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#get_videos_by_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Collect the ids of the videos for a given profile. 
+Requires the execution of start_selenium and login to TikTok first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile_name</strong> (<em>str</em>) – Provide one username, eg. “selenagomez”. The name of a user can be found in the link to the users profile, (e.g. <a class="reference external" href="https://www.tiktok.com/&#64;selenagomez">https://www.tiktok.com/&#64;selenagomez</a>).</p></li>
+<li><p><strong>driver</strong> (<em>selenium.WebDriver</em>) – The driver you have created with start_selenium() (or your own driver)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Limit the number of results. If the number of user videos exceeds this value, the function will return the ids of the top l videos (or a little bit more).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of video links, e.g. [”<a class="reference external" href="https://www.tiktok.com/&#64;alvathehotdog/">https://www.tiktok.com/&#64;alvathehotdog/</a> video/7389719882289483041”, “<a class="reference external" href="https://www.tiktok.com/&#64;unilad/">https://www.tiktok.com/&#64;unilad/</a> video/7010775526902107398”]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">scraper.</span></span><span class="sig-name descname"><span class="pre">start_selenium</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scraper.html#start_selenium"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>This function will start an automated browser and first open wikipedia, then TikTok. 
+Wait until the TikTok page is fully loaded. Then, you can manually login to TikTok,
+and answer the questions you are asked by TikTok (e.g. solve a captcha or disable cookies
+when asked). Once you are finished and the Tiktok Newsfeed is fully visible, you can
+execute the next function, using this driver object.</p>
+<p>Alternatively, if you want to use another browser, you can use your own function to create a driver object.</p>
+<p>Caution: With this function, we try to simulate a normal Chrome browser, not a test browser (as TikTok
+sometimes prevents the login from test browsers). To make this work, the Chrome browser needs to be installed
+on your system. If this functions starts a browser in a test environment, check whether you have chrome installed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A driver object. This can be inserted in each function requiring the driver.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">tiktokscraper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_about.html">TiktokScraper</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_source.html">Source Data</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="01_about.html" title="previous chapter">TiktokScraper</a></li>
+      <li>Next: <a href="03_examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Angelina Voggenreiter.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/02_functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
